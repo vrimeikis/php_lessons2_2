@@ -50,8 +50,8 @@ print_r($user->phones[1]['phone']);
 $string = "4543";
 var_dump((double)$string);
 
-print_r('kas: $string');
-print_r("kas: $string");
+echo 'kas: $string' . 34;
+echo "kas:", $string, 56;
 
 
 

@@ -5,7 +5,7 @@ declare(strict_types = 1);
 /**
  * ND 1.
  * --------------------------------------
- * Turim automobiliu masyva, kuri surado:
+ * Turim automobiliu masyva, kuri sudaro:
  *  - pavadinimas,
  *  - modelis,
  *  - pagaminimo metai,

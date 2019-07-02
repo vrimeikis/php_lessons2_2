@@ -55,6 +55,9 @@ UNIQUE KEY `user_roles_user_id_role_id_unique` (`user_id`,`role_id`)
 
 -- --------------------------------------------------------
 
+ALTER TABLE `table_name`
+ ADD CONSTRAINT index_name_unique UNIQUE (`field1`, `field2`);
+
 ALTER TABLE `users` ADD `active` BOOLEAN DEFAULT '0' AFTER `id`;
 
 

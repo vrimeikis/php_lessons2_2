@@ -4,7 +4,7 @@ declare(strict_types = 1);
 
 /**
  * Turim dvi lenteles: products ir categories.
- * Sukurtis Many To Many relation su foreign.
+ * Sukurti Many To Many relation su foreign.
  *
  * Lenteliu stulpeliai:
  *

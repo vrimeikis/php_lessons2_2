@@ -5,7 +5,7 @@ declare(strict_types = 1);
 require_once(__DIR__ . '/db.php');
 
 $formData = [
-        'category_ids' => [],
+        'categories' => [],
 ];
 
 $sql = 'SELECT id, title FROM categories';
@@ -17,7 +17,7 @@ $categories = $stmt->fetchAll();
 if ($_SERVER['REQUEST_METHOD'] == 'GET' && isset($_GET['product_id']) && $_GET['product_id'] > 0) {
     $productId = $_GET['product_id'];
 
-    $sql = 'SELECT p.*, GROUP_CONCAT(pc.category_id) AS category_ids
+    $sql = 'SELECT p.*, GROUP_CONCAT(pc.category_id) AS categories
         FROM products p
         LEFT JOIN product_categories pc ON p.id = pc.product_id
         WHERE p.id= :productId
@@ -28,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET' && isset($_GET['product_id']) && $_GET['
     $stmt->execute();
     $formData = $stmt->fetch();
 
-    $formData['category_ids'] = $formData['category_ids'] ? explode(',', $formData['category_ids']) : [];
+    $formData['categories'] = $formData['categories'] ? explode(',', $formData['categories']) : [];
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['save_data'])) {
@@ -153,7 +153,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['save_data'])) {
                    type="checkbox"
                    name="categories[]"
                    value="<?= $category['id']; ?>"
-                <?= in_array($category['id'], $formData['category_ids']) ? 'checked="checked"' : ''?>
+                <?= in_array($category['id'], $formData['categories']) ? 'checked="checked"' : ''?>
             >
             <?= $category['title']; ?>
             <br>

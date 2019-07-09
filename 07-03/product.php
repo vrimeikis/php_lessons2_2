@@ -33,7 +33,7 @@ foreach ($products as $product) {
             <a href="product_form.php?product_id=<?= $product['id']; ?>">Edit</a>
             <form action="product_delete.php" method="POST">
                 <input type="hidden" name="deleteId" value="<?= $product['id']; ?>">
-                <input type="submit" onclick="confirm('Do you realy want to delete: <?= $product['title'] ?>?')" name="delete_product" value="Delete">
+                <input type="submit" onclick="return confirm('Do you realy want to delete: <?= $product['title'] ?>?');" name="delete_product" value="Delete">
             </form>
         </td>
     </tr>

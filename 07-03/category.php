@@ -3,12 +3,9 @@
 declare(strict_types = 1);
 
 require_once (__DIR__.'/db.php');
+require_once (__DIR__.'/query_functions.php');
 
-$sql = 'SELECT * FROM categories';
-
-$stmt = $conn->prepare($sql);
-$stmt->execute();
-$categories = $stmt->fetchAll();
+$categories = getAllCategories($conn);
 ?>
 
 <a href="category_form.php">New</a>

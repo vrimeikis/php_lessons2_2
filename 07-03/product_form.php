@@ -3,32 +3,18 @@
 declare(strict_types = 1);
 
 require_once(__DIR__ . '/db.php');
+require_once(__DIR__.'/query_functions.php');
 
 $formData = [
-        'categories' => [],
+    'categories' => [],
 ];
 
-$sql = 'SELECT id, title FROM categories';
-
-$stmt = $conn->prepare($sql);
-$stmt->execute();
-$categories = $stmt->fetchAll();
+$categories = getAllCategories($conn, ['id', 'title']);
 
 if ($_SERVER['REQUEST_METHOD'] == 'GET' && isset($_GET['product_id']) && $_GET['product_id'] > 0) {
     $productId = $_GET['product_id'];
 
-    $sql = 'SELECT p.*, GROUP_CONCAT(pc.category_id) AS categories
-        FROM products p
-        LEFT JOIN product_categories pc ON p.id = pc.product_id
-        WHERE p.id= :productId
-        GROUP BY p.id';
-
-    $stmt = $conn->prepare($sql);
-    $stmt->bindValue(':productId', $productId, PDO::PARAM_INT);
-    $stmt->execute();
-    $formData = $stmt->fetch();
-
-    $formData['categories'] = $formData['categories'] ? explode(',', $formData['categories']) : [];
+    $formData = getProductWithCategoryIdsById($conn, $productId);
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['save_data'])) {
@@ -36,28 +22,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['save_data'])) {
 
     if (isset($postData['id']) && $postData['id'] > 0) {
         try {
-            $sql = 'UPDATE products SET title= :title, slug= :slug, description= :description, price= :price WHERE id=:id';
-            $stmt = $conn->prepare($sql);
-            $stmt->bindValue(':title', $postData['title'], PDO::PARAM_STR);
-            $stmt->bindValue(':slug', $postData['slug'], PDO::PARAM_STR);
-            $stmt->bindValue(':description', $postData['description'], PDO::PARAM_STR);
-            $stmt->bindValue(':price', $postData['price'], PDO::PARAM_INT);
-            $stmt->bindValue(':id', $postData['id'], PDO::PARAM_INT);
-            $stmt->execute();
-
-            $sql = 'DELETE FROM product_categories WHERE product_id = :productId';
-            $stmt = $conn->prepare($sql);
-            $stmt->bindValue(':productId', $postData['id'], PDO::PARAM_INT);
-            $stmt->execute();
+            updateProduct($conn, $postData);
+            deleteCategoryPivotByProductId($conn, $postData['id']);
 
             if (isset($postData['categories']) && !empty($postData['categories'])) {
-
-                $sql = 'INSERT INTO product_categories SET category_id = :categoryId, product_id = :productId';
                 foreach ($postData['categories'] as $categoryId) {
-                    $stmt = $conn->prepare($sql);
-                    $stmt->bindValue(':productId', $postData['id'], PDO::PARAM_INT);
-                    $stmt->bindValue(':categoryId', $categoryId, PDO::PARAM_INT);
-                    $stmt->execute();
+                    insertCategoryPivot($conn, (int)$postData['id'], (int)$categoryId);
                 }
             }
 
@@ -68,28 +38,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['save_data'])) {
             $formData = $postData;
         }
     } else {
-
         try {
-            $sql = 'INSERT INTO products SET title= :title, slug= :slug, description= :description, price= :price';
-            $stmt = $conn->prepare($sql);
-            $stmt->bindValue(':title', $postData['title'], PDO::PARAM_STR);
-            $stmt->bindValue(':slug', $postData['slug'], PDO::PARAM_STR);
-            $stmt->bindValue(':description', $postData['description'], PDO::PARAM_STR);
-            $stmt->bindValue(':price', $postData['price'], PDO::PARAM_INT);
-            $stmt->execute();
-
-            $productId = $conn->lastInsertId();
+            $productId = insertProduct($conn, $postData);
 
             if ($productId > 0) {
-
                 if (isset($postData['categories']) && !empty($postData['categories'])) {
-
-                    $sql = 'INSERT INTO product_categories SET category_id = :categoryId, product_id = :productId';
                     foreach ($postData['categories'] as $categoryId) {
-                        $stmt = $conn->prepare($sql);
-                        $stmt->bindValue(':productId', $productId, PDO::PARAM_INT);
-                        $stmt->bindValue(':categoryId', $categoryId, PDO::PARAM_INT);
-                        $stmt->execute();
+                        insertCategoryPivot($conn, $productId, (int)$categoryId);
                     }
                 }
 
@@ -153,7 +108,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['save_data'])) {
                    type="checkbox"
                    name="categories[]"
                    value="<?= $category['id']; ?>"
-                <?= in_array($category['id'], $formData['categories']) ? 'checked="checked"' : ''?>
+                <?= in_array($category['id'], $formData['categories']) ? 'checked="checked"' : '' ?>
             >
             <?= $category['title']; ?>
             <br>

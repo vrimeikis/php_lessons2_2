@@ -1,0 +1,25 @@
+{
+    "name": "vrimeikis/helloworld",
+    "description": "Test composer usage",
+    "type": "project",
+    "require": {
+        "php": ">=7.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "Products\\": "src/"
+        }
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Vytautas R",
+            "email": "vytautas.rimeikis@gmail.com"
+        }
+    ],
+    "config": {
+        "optimize-autoloader": true
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}

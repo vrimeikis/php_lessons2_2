@@ -10,8 +10,9 @@ class Model extends Database
 {
     protected $table;
 
-    public function get(): array {
-        $sql = 'SELECT * FROM '.$this->table;
+    public function get(): array
+    {
+        $sql = 'SELECT * FROM ' . $this->table;
 
         $stmt = $this->getConnection()->prepare($sql);
         $stmt->execute();
@@ -19,8 +20,9 @@ class Model extends Database
         return $stmt->fetchAll();
     }
 
-    public function find(int $id): ?array {
-        $sql = 'SELECT * FROM '.$this->table.' WHERE id = :id';
+    public function find(int $id): ?array
+    {
+        $sql = 'SELECT * FROM ' . $this->table . ' WHERE id = :id';
 
         $stmt = $this->getConnection()->prepare($sql);
         $stmt->bindValue(':id', $id, PDO::PARAM_INT);

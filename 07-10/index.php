@@ -13,7 +13,6 @@ $categoryClass = new Category();
 $products = $productModel->find(4);
 $categories = $categoryClass->get();
 
-
 ?>
 <pre>
 

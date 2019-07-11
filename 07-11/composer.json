@@ -1,0 +1,26 @@
+{
+    "name": "vrimeikis/weather",
+    "description": "Real time weather",
+    "type": "project",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Vytautas Rimeikis",
+            "email": "vytautas.rimeikis@gmail.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {
+        "php": ">=7.2",
+        "ext-json": "*",
+        "guzzlehttp/guzzle": "^6.3"
+    },
+    "autoload": {
+        "psr-4": {
+            "Weather\\": "src/"
+        }
+    },
+    "config": {
+        "optimize-autoloader": true
+    }
+}
